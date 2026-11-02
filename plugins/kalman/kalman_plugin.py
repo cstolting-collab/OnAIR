@@ -199,28 +199,32 @@ class Plugin(AIPlugin):
         -------
         residuals : numpy.ndarray
             Residuals based on the difference between the last observation and
-            the Kalman filter-smoothed prediction. If the frame length is 2 or less,
-            returns an array of zeros.
+            the Kalman filter prediction. Each attribute with 2 or fewer
+            observations retains the existing warm-up residual of zero.
 
         Notes
         -----
-        The current size of each frame must be greater than 2 for valid initial and last values,
-        and for the Kalman filter to have sufficient data for smoothing.
+        Ingestion skips non-finite readings per attribute, so window lengths can
+        differ. Predict only attributes with at least 3 observations, batching
+        equal-length windows together for the rectangular Kalman filter input.
+        Warm-up zeros indicate insufficient history, not evidence of health.
         """
-        if len(self.frames[0]) > 2:
+        residuals = np.zeros((len(self.frames),))
+        groups = {}
+        for index, frame in enumerate(self.frames):
+            if len(frame) > 2:
+                groups.setdefault(len(frame), []).append(index)
+
+        for indices in groups.values():
+            frames = [self.frames[index] for index in indices]
             # generate initial values for frame, use first value for each attribute
-            initial_val = np.zeros((len(self.frames), 2, 1))
-            for i, frame in enumerate(self.frames):
+            initial_val = np.zeros((len(frames), 2, 1))
+            for i, frame in enumerate(frames):
                 initial_val[i] = np.array([[frame[0], 0]]).transpose()
-            predictions = self._predict(
-                [data[1:-1] for data in self.frames], 1, initial_val
-            )
-            actual_next_obs = [data[-1] for data in self.frames]
+            predictions = self._predict([data[1:-1] for data in frames], 1, initial_val)
+            actual_next_obs = [data[-1] for data in frames]
             pred_mean = [
                 pred for attr in predictions.observations.mean for pred in attr
             ]
-            residuals = np.abs(np.subtract(pred_mean, actual_next_obs))
-        else:
-            # return residual of 0 for frames size less than or equal to 2
-            residuals = np.zeros((len(self.frames),))
+            residuals[indices] = np.abs(np.subtract(pred_mean, actual_next_obs))
         return residuals
