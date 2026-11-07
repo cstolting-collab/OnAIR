@@ -121,6 +121,20 @@ print(json.dumps({
         pytest.param(
             ["TIME", "SIGNAL"], [[1, 10], [2, 11]], [2, 2], [], id="warmup-control"
         ),
+        pytest.param(
+            ["TIME", "SIGNAL"],
+            [[10**309, 10], [10**309, 10], [10**309, 100]],
+            [0, 3],
+            ["SIGNAL"],
+            id="overflow-first",
+        ),
+        pytest.param(
+            ["TIME", "SIGNAL"],
+            [[1, 10], [2, 10], [3, -(10**309)], [4, 100]],
+            [4, 3],
+            ["SIGNAL"],
+            id="overflow-between-valid-readings",
+        ),
     ],
 )
 def test_real_predictor_with_missing_samples(

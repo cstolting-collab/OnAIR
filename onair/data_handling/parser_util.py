@@ -58,7 +58,7 @@ def floatify_input(_input, remove_str=False):
     - Values that ``convert_str_to_timestamp`` parses (a ``%Y-%j-%H:%M:%S.%f``
       telemetry timestamp, or a strict ``MM:SS`` pair with minute and second
       each in 0..59) are appended as their epoch float.
-    - Everything else -- ``"-"``, ``None``, junk text, and non-finite
+    - Everything else -- ``"-"``, ``None``, junk text, overflowing numbers, and non-finite
       spellings like ``"nan"``/``"inf"``/``"Infinity"`` (whose ``float()``
       result is not finite) -- is either dropped entirely when ``remove_str``
       is True, or substituted with ``math.nan`` plus a WARNING via
@@ -73,7 +73,7 @@ def floatify_input(_input, remove_str=False):
             if math.isfinite(x):
                 floatified.append(x)
                 continue
-        except (ValueError, TypeError):
+        except (ValueError, TypeError, OverflowError):
             pass
         # non-finite float() results (nan/inf strings and floats) fall through
         # to the timestamp attempt, which rejects them -> junk policy below
@@ -85,8 +85,14 @@ def floatify_input(_input, remove_str=False):
             pass
         if remove_str:
             continue
+        try:
+            value_repr = repr(i)
+        except ValueError:
+            # Very large integers (including nested ones) can exceed Python's
+            # decimal conversion limit. Reporting missing data must not crash.
+            value_repr = f"<{type(i).__name__}>"
         print_msg(
-            f"floatify_input: could not parse {i!r} to a finite float; substituting math.nan",
+            f"floatify_input: could not parse {value_repr} to a finite float; substituting math.nan",
             ["WARNING"],
         )
         floatified.append(math.nan)
@@ -136,9 +142,7 @@ def convert_str_to_timestamp(time_str):
         pass
     min_sec = time_str.split(":")
     if len(min_sec) != 2:
-        raise ValueError(
-            f"convert_str_to_timestamp: expected MM:SS, got {time_str!r}"
-        )
+        raise ValueError(f"convert_str_to_timestamp: expected MM:SS, got {time_str!r}")
     try:
         minute = int(min_sec[0])
         second = int(min_sec[1])
