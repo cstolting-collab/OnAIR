@@ -1,0 +1,27 @@
+{
+  "repository": "cstolting-collab/OnAIR",
+  "branch": "206-pr207-unequal-histories-review",
+  "upstream_pr": "https://github.com/nasa/OnAIR/pull/207",
+  "original_followup": "9f6f4877118df3e48bb80f0649595ea5c3feda12",
+  "commits": [
+    {
+      "local_sha": "8b39bfb583af2fffad41396060dec1083f80e63b",
+      "public_sha": "f859ec45a2bb65e937d6592ae4a0860fea119189",
+      "tree": "8bceea35b9e7a6024bdcd25dbd1b45ed7e1d3408"
+    },
+    {
+      "local_sha": "b98f60d0b63130244988150fdec85cff8867f80d",
+      "public_sha": "ac160a6f1acfeb8269430471e17d89baabf72cae",
+      "tree": "a1485365a2f21ea35210855bd84d9b1e4ffb7150"
+    },
+    {
+      "local_sha": "33b1f35192025bcb4e9b1a49c431851d5062bedf",
+      "public_sha": "5e2230de7e8a1d266f0381969edbb8d33e04b312",
+      "tree": "3a54d27c31c8571361e19409c919b01aab200b9a"
+    }
+  ],
+  "zip_sha256": "477a9ced719b8df590e19515a408d646299f2b1a718d3b3fa3c4f08439ffee62",
+  "zip_git_blob": "ed9c2d8cd0f63956447ea46b7e7b8a8c9a9d6fe6",
+  "human_review": "not asserted",
+  "upstream_comment": "pending"
+}
