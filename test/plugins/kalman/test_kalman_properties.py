@@ -34,7 +34,6 @@ import onair.src.ai_components.ai_plugin_abstract.ai_plugin as ai_plugin_abstrac
 from plugins.kalman import kalman_plugin
 from plugins.kalman.kalman_plugin import Plugin
 
-
 # ---------------------------------------------------------------------------
 # Hypothesis settings: full 1000-example runs normally; a derandomized
 # 25-example cap when MUTMUT_HYPOTHESIS_FAST is set (mutation-testing runner).
@@ -78,9 +77,7 @@ def _silence_and_record_print_msg(monkeypatch):
     monkeypatch.setattr(
         ai_plugin_abstract, "ServiceManager", MagicMock(), raising=False
     )
-    monkeypatch.setattr(
-        kalman_plugin, "print_msg", _record_print_msg, raising=False
-    )
+    monkeypatch.setattr(kalman_plugin, "print_msg", _record_print_msg, raising=False)
     yield
     print_msg_calls.clear()
 
@@ -182,9 +179,7 @@ class KalmanUpdateMachine(RuleBasedStateMachine):
         self.plugin = _make_plugin(num_headers, window_size)
         self.headers = self.plugin.headers
 
-    @rule(
-        vals=st.lists(finite_float, min_size=MAX_HEADERS, max_size=MAX_HEADERS)
-    )
+    @rule(vals=st.lists(finite_float, min_size=MAX_HEADERS, max_size=MAX_HEADERS))
     def valid_frame(self, vals):
         frame = vals[: len(self.headers)]
         before_lengths = [len(f) for f in self.plugin.frames]
@@ -199,13 +194,13 @@ class KalmanUpdateMachine(RuleBasedStateMachine):
         # re-arm lockstep tracking once saturation re-equalizes the windows
         self.windows_equal = len({len(f) for f in self.plugin.frames}) == 1
 
-    @rule(
-        vals=st.lists(json_scalar, min_size=MAX_HEADERS, max_size=MAX_HEADERS)
-    )
+    @rule(vals=st.lists(json_scalar, min_size=MAX_HEADERS, max_size=MAX_HEADERS))
     def junk_frame(self, vals):
         frame = vals[: len(self.headers)]
         print_msg_calls.clear()
-        self.plugin.update(frame)  # I1: must not raise (junk becomes nan and is skipped)
+        self.plugin.update(
+            frame
+        )  # I1: must not raise (junk becomes nan and is skipped)
         self.valid_streak = 0
         # partial skips may desynchronize window lengths; lockstep is only
         # guaranteed to continue while the windows are currently equal
@@ -226,9 +221,7 @@ class KalmanUpdateMachine(RuleBasedStateMachine):
 
     @rule(
         extra=st.integers(min_value=1, max_value=3),
-        vals=st.lists(
-            finite_float, min_size=MAX_HEADERS + 3, max_size=MAX_HEADERS + 3
-        ),
+        vals=st.lists(finite_float, min_size=MAX_HEADERS + 3, max_size=MAX_HEADERS + 3),
     )
     def long_frame(self, extra, vals):
         frame = vals[: len(self.headers) + extra]

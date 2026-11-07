@@ -27,7 +27,6 @@ from hypothesis import given, settings, strategies as st
 
 import onair.data_handling.parser_util as parser_util
 
-
 # ---------------------------------------------------------------------------
 # Hypothesis settings: full 1000-example runs normally; a derandomized 25-example
 # cap when MUTMUT_HYPOTHESIS_FAST is set (used by the mutation-testing runner).
@@ -183,8 +182,7 @@ def test_P6_valid_doy_timestamp_converts_to_exact_epoch(
     year, doy, hour, minute, second, micro
 ):
     time_str = (
-        f"{year:04d}-{doy:03d}-{hour:02d}:"
-        f"{minute:02d}:{second:02d}.{micro:06d}"
+        f"{year:04d}-{doy:03d}-{hour:02d}:" f"{minute:02d}:{second:02d}.{micro:06d}"
     )
     out = parser_util.floatify_input([time_str])
     expected = (

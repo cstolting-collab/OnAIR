@@ -543,9 +543,7 @@ def test_kill_update_valid_frame_stored_in_lockstep_windows(mocker):
 def test_kill_update_junk_frame_stores_nothing(mocker):
     # Arrange
     cut = _make_cut_for_update_kill_tests(3, 3, existing=1)
-    mock_floatify_warning = mocker.patch(
-        "onair.data_handling.parser_util.print_msg"
-    )
+    mock_floatify_warning = mocker.patch("onair.data_handling.parser_util.print_msg")
     before = [list(frame) for frame in cut.frames]
 
     # Act
@@ -580,7 +578,9 @@ def test_kill_update_nan_spiked_frame_skips_only_spiked_attribute(mocker):
 
     # Assert
     assert cut.frames[0] == []  # nan skipped
-    assert cut.frames[1] == [2.5]  # later attributes still stored (kills continue->break)
+    assert cut.frames[1] == [
+        2.5
+    ]  # later attributes still stored (kills continue->break)
     assert cut.frames[2] == [3.5]
 
 

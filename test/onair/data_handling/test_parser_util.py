@@ -838,27 +838,33 @@ def test_parser_util_convert_str_to_timestamp_raises_error_when_both_strptime_an
 # ---------------------------------------------------------------------------
 def test_kill_convert_str_to_timestamp_exact_epochs_for_boundaries_and_doy():
     # exact-epoch asserts: kill datetime-literal, index-swap and 0/59 boundary mutants
-    assert parser_util.convert_str_to_timestamp("12:34") == datetime.datetime(
-        2000, 1, 1, 1, 12, 34, 0
-    ).timestamp()
-    assert parser_util.convert_str_to_timestamp("00:00") == datetime.datetime(
-        2000, 1, 1, 1, 0, 0, 0
-    ).timestamp()
-    assert parser_util.convert_str_to_timestamp("59:59") == datetime.datetime(
-        2000, 1, 1, 1, 59, 59, 0
-    ).timestamp()
-    assert parser_util.convert_str_to_timestamp(
-        "2020-001-12:34:56.789"
-    ) == datetime.datetime(2020, 1, 1, 12, 34, 56, 789000).timestamp()
+    assert (
+        parser_util.convert_str_to_timestamp("12:34")
+        == datetime.datetime(2000, 1, 1, 1, 12, 34, 0).timestamp()
+    )
+    assert (
+        parser_util.convert_str_to_timestamp("00:00")
+        == datetime.datetime(2000, 1, 1, 1, 0, 0, 0).timestamp()
+    )
+    assert (
+        parser_util.convert_str_to_timestamp("59:59")
+        == datetime.datetime(2000, 1, 1, 1, 59, 59, 0).timestamp()
+    )
+    assert (
+        parser_util.convert_str_to_timestamp("2020-001-12:34:56.789")
+        == datetime.datetime(2020, 1, 1, 12, 34, 56, 789000).timestamp()
+    )
     # updated: pin single-digit MM:SS acceptance ("1:2" == 1m 2s), matching
     # int() semantics documented in convert_str_to_timestamp
-    assert parser_util.convert_str_to_timestamp("1:2") == datetime.datetime(
-        2000, 1, 1, 1, 1, 2, 0
-    ).timestamp()
+    assert (
+        parser_util.convert_str_to_timestamp("1:2")
+        == datetime.datetime(2000, 1, 1, 1, 1, 2, 0).timestamp()
+    )
     # updated: post-2020 full-format timestamp (2024 is a leap year; doy 032 = Feb 1)
-    assert parser_util.convert_str_to_timestamp(
-        "2024-032-14:30:45.123456"
-    ) == datetime.datetime(2024, 2, 1, 14, 30, 45, 123456).timestamp()
+    assert (
+        parser_util.convert_str_to_timestamp("2024-032-14:30:45.123456")
+        == datetime.datetime(2024, 2, 1, 14, 30, 45, 123456).timestamp()
+    )
 
 
 def test_kill_convert_str_to_timestamp_malformed_inputs_raise_ValueError():
