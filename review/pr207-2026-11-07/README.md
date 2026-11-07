@@ -39,3 +39,5 @@ ZIP SHA-256: `477a9ced719b8df590e19515a408d646299f2b1a718d3b3fa3c4f08439ffee62`.
 ZIP Git blob: `ed9c2d8cd0f63956447ea46b7e7b8a8c9a9d6fe6`.
 
 The archive is preserved unchanged from preparation. Its “not posted” statements describe that earlier snapshot. This index records publication of the code and evidence; the upstream PR remains the original author's PR.
+
+[Upstream follow-up comment](https://github.com/nasa/OnAIR/pull/207#issuecomment-6709500117) posted on 2026-11-07T16:03:41Z.
